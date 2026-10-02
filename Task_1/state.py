@@ -27,7 +27,7 @@ class ConversationState:
             self.negative_since = None
             self.resolved = True
     
-    def minute_negative(self):
+    def minutes_negative(self):
         if self.negative_since is None:
             return 0
         return (config.get_now() - self.negative_since).total_seconds() / 60.0 
