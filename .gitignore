@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 faiss_index/
 .idea/
+Data/escalations.jsonl
