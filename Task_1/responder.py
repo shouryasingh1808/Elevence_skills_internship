@@ -23,7 +23,6 @@ TONE_GUIDE = {
     "positive": "Warm and brief.",
     "neutral": "Polite, plain and factual. No emotional language.",
     "negative": "Start with empathy (for example: 'I'm sorry about this'), then state the next step.",
-    "frustrated": "Begin with a sincere apology and name the frustration (for example: 'I understand how frustrating this must be'). Calm, no jargon, no excuses. 2-3 sentences.",
     "urgent": "Maximum 2 short sentences. No apology paragraph, no filler. Lead with the action.",
     "sarcastic": "Begin by sincerely acknowledging the real problem behind the sarcasm (like the delay). Do not copy or mention the sarcasm. Calm and respectful.",
     "frustrated": "The FIRST sentence must be a sincere apology that names the frustration, written in the reply language (for example in English: 'I'm really sorry, I understand how frustrating this is'). Then the next step. 2-3 sentences, calm, no excuses.",
@@ -40,49 +39,51 @@ def next_step_text(route):
         return f"Your case has been scheduled for follow-up on {when.strftime('%A, %d %B at %I:%M %p')}."
     if queue == "agent_queue":
         return "Your case has been passed to a support agent"
-    return "No escalation is needed right now"
+    return "No special next step. Do not mention escalation or agents."
 
-def language_instruction(language):
-    if "hinglish" in language.lower():
-        return (
-            "Write in Hinglish: Hindi words in ROMAN (English) letters mixed with common "
-            "English words, like the customer. NEVER use Devanagari script. "
-            "Example of the style: 'Aapki problem ke liye sorry. Hamari team ne aapka case "
+def generate_reply(message, history, analysis, route):
+    tone = TONE_GUIDE.get(analysis["sentiment"], TONE_GUIDE["neutral"])
+    language = analysis.get("language", "English")
+
+    message_is_devanagari = bool(DEVANAGARI.search(message))
+    if message_is_devanagari:
+        script_rule = "Reply in Hindi using Devanagari script."
+    elif language.lower() in ("hindi", "hinglish"):
+        script_rule = (
+            "Reply in Hinglish: Hindi words written in ROMAN (English) letters, "
+            "mixed with simple English words. NEVER use Devanagari script. "
+            "Example: 'Aapki problem ke liye sorry. Hamari team ne aapka case "
             "ek agent ko de diya hai.'"
         )
-    return f"Write the whole reply in {language}."
+    else:
+        script_rule = f"Reply in {language}."
 
-def generate_reply(message , history, analysis , route ):
-    tone = TONE_GUIDE.get(analysis["sentiment"], TONE_GUIDE["neutral"])
-        
-    language = analysis.get("language", "the customer's language")
     system_prompt = (
         BUSINESS_POLICY
-        + f"\n\nREPLY LANGUAGE: {language_instruction(language)}."
-        "Keep names, order IDs and amounts unchanged."
+        + f"\n\nREPLY LANGUAGE: {script_rule} Keep names, order IDs and amounts unchanged."
         + f"\n\nTONE FOR THIS REPLY (follow this strictly): {tone}"
         + f"\n\nNEXT STEP (state this in your own words): {next_step_text(route)}"
-        )
-    messages = [{"role" :  "system" , "content" : system_prompt}]
+    )
+    messages = [{"role": "system", "content": system_prompt}]
     for m in history[-6:]:
         role = "assistant" if m["role"] == "bot" else "user"
-        messages.append({"role" : role , "content" : m["content"]})
-    messages.append({"role" : "user" , "content" :message})
+        messages.append({"role": role, "content": m["content"]})
+    messages.append({"role": "user", "content": message})
 
     try:
         response = client.chat.completions.create(
-            model = MODEL,
+            model=MODEL,
             temperature=0.3,
             reasoning_effort="low",
-            messages = messages,
+            messages=messages,
         )
         reply = response.choices[0].message.content
         if reply and reply.strip():
             reply = reply.strip()
-            if "hinglish" in analysis.get("language", "").lower() and DEVANAGARI.search(reply):
-                print("[devanagari found in Hinglish reply, using fallback]")
+            if not message_is_devanagari and DEVANAGARI.search(reply):
+                print("[devanagari found in reply, using fallback]")
                 return FALLBACK_REPLY
             return reply
     except Exception as e:
-        print(f"[reply failed : {e}]")
+        print(f"[reply failed: {e}]")
     return FALLBACK_REPLY

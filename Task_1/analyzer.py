@@ -24,6 +24,9 @@ Return ONLY a JSON object with exactly these keys:
 - "risk_type": one of "none","account_compromise","duplicate_payment","legal_threat"
 - "risk_confidence": number between 0 and 1
 - "reason": one short sentence explaining your choice
+- Praise mixed with a complaint, delay or waiting is "sarcastic", never "neutral". Example: "What a wonderful service, I am still waiting" -> sarcastic.
+- Mild positive words about the service ("great", "wonderful", "thanks") followed by a problem still present mean the customer is unhappy.
+- "language": one of "English", "Hindi" (written in Devanagari script), "Hinglish" (Hindi written in Roman/English letters, or Hindi mixed with English), or the language name for any other language
 
 Rules:
 - If positive words are used to express a complaint, the sentiment is "sarcastic".
