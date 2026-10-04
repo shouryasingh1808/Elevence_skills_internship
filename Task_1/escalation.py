@@ -35,7 +35,7 @@ def check_escalation(state,analysis):
 #  ROUTE COMPLAINTS -->
 
 def route_complaint(analysis , triggers):
-    if not analysis["is_complaint"] and not triggers:
+    if not analysis["is_complaint"] and not triggers and analysis["sentiment"] != "urgent":       
         return {"queue" : "none" , "scheduled_for" : None , "urgent" : False}
 
     urgent = analysis["sentiment"] == "urgent"  or any(t["condition"] == "high_risk_issue" for t in triggers)

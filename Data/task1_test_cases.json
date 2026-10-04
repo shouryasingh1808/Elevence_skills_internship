@@ -1,0 +1,121 @@
+[
+  {
+    "name": "sarcasm_english",
+    "start": "2026-10-06T11:00:00",
+    "messages": [[0, "What a wonderful service, I have been waiting for my order for 5 days"]],
+    "expected_sentiment": "sarcastic",
+    "expected_triggers": [],
+    "expected_queue": "agent_queue"
+  },
+  {
+    "name": "sarcasm_hinglish",
+    "start": "2026-10-06T11:00:00",
+    "messages": [[0, "Wah, kya kamaal service hai, 3 din se order nahi aaya"]],
+    "expected_sentiment": "sarcastic",
+    "expected_queue": "agent_queue"
+  },
+  {
+    "name": "calm_duplicate_payment_business_hours",
+    "start": "2026-10-06T11:00:00",
+    "messages": [[0, "Hello, I noticed two charges of Rs 499 on my statement for the same order. Could you please look into it?"]],
+    "expected_triggers": ["high_risk_issue"],
+    "expected_queue": "agent_queue"
+  },
+  {
+    "name": "calm_duplicate_payment_sunday_night",
+    "start": "2026-10-04T22:30:00",
+    "messages": [[0, "Hello, I noticed two charges of Rs 499 on my statement for the same order. Could you please look into it?"]],
+    "expected_triggers": ["high_risk_issue"],
+    "expected_queue": "on_call_queue"
+  },
+  {
+    "name": "account_compromise_night",
+    "start": "2026-10-06T22:30:00",
+    "messages": [[0, "Someone logged into my account from another country."]],
+    "expected_triggers": ["high_risk_issue"],
+    "expected_queue": "on_call_queue"
+  },
+  {
+    "name": "legal_threat_calm",
+    "start": "2026-10-06T11:00:00",
+    "messages": [[0, "If this is not resolved this week, I will have to consult my lawyer."]],
+    "expected_triggers": ["high_risk_issue"],
+    "expected_queue": "agent_queue"
+  },
+  {
+    "name": "urgent_after_hours",
+    "start": "2026-10-06T22:30:00",
+    "messages": [[0, "I need my order delivered today for an important event, please help urgently!"]],
+    "expected_sentiment": "urgent",
+    "expected_triggers": [],
+    "expected_queue": "on_call_queue"
+  },
+  {
+    "name": "normal_complaint_sunday_night",
+    "start": "2026-10-04T22:30:00",
+    "messages": [[0, "Mera order 3 din late hai"]],
+    "expected_triggers": [],
+    "expected_queue": "next_working_day",
+    "expected_scheduled_prefix": "2026-10-05T09:00"
+  },
+  {
+    "name": "normal_complaint_saturday_after_close",
+    "start": "2026-10-03T18:30:00",
+    "messages": [[0, "My order is 3 days late"]],
+    "expected_triggers": [],
+    "expected_queue": "next_working_day",
+    "expected_scheduled_prefix": "2026-10-05T09:00"
+  },
+  {
+    "name": "thanks_no_complaint",
+    "start": "2026-10-06T11:00:00",
+    "messages": [[0, "Thanks, my problem is solved!"]],
+    "expected_triggers": [],
+    "expected_queue": "none"
+  },
+  {
+    "name": "repeated_negative_three",
+    "start": "2026-10-06T11:00:00",
+    "messages": [
+      [0, "My order is late"],
+      [2, "No reply from you, terrible service"],
+      [4, "This is the worst support ever, I am very angry"]
+    ],
+    "expected_triggers": ["repeated_negative"],
+    "expected_queue": "agent_queue"
+  },
+  {
+    "name": "timeout_after_16_minutes",
+    "start": "2026-10-06T11:00:00",
+    "messages": [
+      [0, "My order has not arrived, I am very disappointed"],
+      [5, "Still no reply, this is bad service"]
+    ],
+    "expected_triggers": [],
+    "expected_queue": "agent_queue",
+    "timeout_check_at": 16,
+    "expected_timeout": true
+  },
+  {
+    "name": "timeout_boundary_15_minutes",
+    "start": "2026-10-06T11:00:00",
+    "messages": [
+      [0, "My order has not arrived, I am very disappointed"],
+      [5, "Still no reply, this is bad service"]
+    ],
+    "expected_triggers": [],
+    "timeout_check_at": 15,
+    "expected_timeout": false
+  },
+  {
+    "name": "resolved_no_timeout",
+    "start": "2026-10-06T11:00:00",
+    "messages": [
+      [0, "My order has not arrived, I am very disappointed"],
+      [5, "Thanks, the problem is solved now!"]
+    ],
+    "expected_queue": "none",
+    "timeout_check_at": 20,
+    "expected_timeout": false
+  }
+]
