@@ -12,6 +12,15 @@ if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
     st.session_state.last = None
 
+with st.sidebar:
+    use_fake = st.checkbox("Use fake time")
+    if use_fake:
+        d = st.date_input("Date", datetime(2026, 10, 4))
+        t = st.time_input("Time", datetime(2026, 10, 4, 22, 30).time())
+        config.set_time(datetime.combine(d, t).replace(tzinfo=config.TIMEZONE))
+    else:
+        config.clear_time()
+
 with st.form("chat_form", clear_on_submit=True):
     question = st.text_input("Question: ")
     sent = st.form_submit_button("Send")
