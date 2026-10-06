@@ -15,6 +15,8 @@ class Ticket:
     evidence: list = field(default_factory=list)
     contact: str | None = None
     severity: str = "medium"
+    impact: str = "single_customer"
+    priority_score: float = 0.0
     sentiment: str = "neutral"
     priority: str = "P3"
     status: str = "open"

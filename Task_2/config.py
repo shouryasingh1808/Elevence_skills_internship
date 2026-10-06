@@ -30,5 +30,14 @@ AGENTS = [
     {"name" : "Rohan" , "skills" : ["technical" , "general"] , "available" : True , "workload":0 , "max_load" : 5},
 ]
 
+# EACH LEVEL GETS FRACTION...
+SEVERITY_LEVELS = {"low" : 0.0 , "medium" :0.4 , "high":0.75 , "critical" : 1.0}
+SENTIMENT_LEVELS =  {"positive": 0.0, "neutral": 0.1, "negative": 0.5,"sarcastic": 0.6, "frustrated": 0.8, "urgent": 1.0}
 
+IMPACT_LEVELS = {"single_customer" : 0.25 , "multiple_customers" : 0.7 , "business" : 1.0}
 
+# WAITING THIS MUCH TIME TO GET FULL POINTS..
+WAITING_FULL_HOURS = 24
+
+# PROBLEM OF THIS SEVERITY NEVER GOES BELOW FROM THIS PROIORITY
+PRIORITY_FLOOP = {"critical" : "P1"}
