@@ -17,6 +17,10 @@ class Ticket:
     severity: str = "medium"
     impact: str = "single_customer"
     priority_score: float = 0.0
+    sla_status: str = "ok"
+    warned: bool = False
+    escalated: bool = False
+    events: list = field(default_factory=list)
     sentiment: str = "neutral"
     priority: str = "P3"
     status: str = "open"
