@@ -21,6 +21,9 @@ class Ticket:
     warned: bool = False
     escalated: bool = False
     events: list = field(default_factory=list)
+    queue: str = "unassigned"
+    routing_reason: str = ""
+    scheduled_for: str | None = None
     sentiment: str = "neutral"
     priority: str = "P3"
     status: str = "open"
