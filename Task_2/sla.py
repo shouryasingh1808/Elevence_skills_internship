@@ -84,7 +84,7 @@ def _log(ticket , event , detail):
 def check_all_tickets():
     events = []
     for ticket in tickets.values():
-        if ticket.status in ("resolved" , "closed"):
+        if ticket.status in ("resolved" , "closed" , "duplicate"):
             continue
 
         result = check_sla(ticket)

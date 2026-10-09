@@ -41,3 +41,6 @@ WAITING_FULL_HOURS = 24
 
 # PROBLEM OF THIS SEVERITY NEVER GOES BELOW FROM THIS PROIORITY
 PRIORITY_FLOOP = {"critical" : "P1"}
+
+# IF two text match this much (0-1) then the problem will consider same...
+SIMILARITY_LIMMIT = 0.6
