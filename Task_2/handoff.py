@@ -20,8 +20,31 @@ def summarize(history):
         response = client.chat.completions.create(
             model = MODEL,
             temperature= 0.0,
-            reasoning_effort="low",
+            reasoning_effort= "low",
             messages = [
-                {"role" : "user" , "content" : text}
-            ]
+                {"role" : "system" , "content" : SUMMARY_PROMPT},
+                {"role" : "user" , "content" : text},
+            ],
         )
+
+        summary = (response.choices[0].message.content or "").strip()
+        if summary:
+            return mask_text(summary)
+    except Exception as e :
+        print(f"[summary failed: {e}]")
+    return text[-300:]
+
+def build_handoff(ticket , history):
+    due = ticket.due_at.strftime("%a %d %b %Y, %I:%M %p") if ticket.due_at else "-"
+    assigned = ticket.assigned_to or ticket.queue
+    contact = mask_text(ticket.contact) if ticket.contact else "-"
+    return "\n".join([
+        f"TICKET {ticket.ticket_id} | {ticket.priority} | {ticket.category}",
+        f"Customer: {ticket.customer or '-'} | Contact: {contact}",
+        f"Order: {ticket.order_id or '-'} | Issue: {ticket.issue or '-'}",
+        f"Assigned to: {assigned} | Due: {due}",
+        f"Group: {ticket.group_id or '-'}",
+        f"Summary: {summarize(history)}",
+    ])
+
+    
