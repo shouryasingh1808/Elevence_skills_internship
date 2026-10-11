@@ -12,6 +12,8 @@ def at(day , hour , minute = 0):
 clock.set_time(at(6,9))
 
 history = [
-    {"role" : "customer" , "content" : "My order ORD-4521 has not been arrived yet.. Its been 6 days and my gmail id is shourya@gmail.com and my phone number is 7239997004"},
-    
-]
+    {"role" : "customer" , "content" : "My order ORD-4521 has not been arrived yet.. Its been 6 days and my gmail id is shourya@gmail.com and my phone number is 7447495838"},
+    {"role" : "bot" , "content": "Sorry about that, We are checking!"},
+    {"role": "customer" , "content":"I have been charged twice in same order..My card number is 4111 1111 1111 1111 .. Please check and refund my amount as soon as possible.!"}
+
+]   
