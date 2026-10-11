@@ -12,8 +12,29 @@ def at(day , hour , minute = 0):
 clock.set_time(at(6,9))
 
 history = [
-    {"role" : "customer" , "content" : "My order ORD-4521 has not been arrived yet.. Its been 6 days and my gmail id is shourya@gmail.com and my phone number is 7447495838"},
+    {"role" : "customer" , "content" : "My order ORD-4521 has not been arrived yet.. Its been 6 days and my gmail id is shourya@gmail.com and my phone number is 9876543210"},
     {"role" : "bot" , "content": "Sorry about that, We are checking!"},
-    {"role": "customer" , "content":"I have been charged twice in same order..My card number is 4111 1111 1111 1111 .. Please check and refund my amount as soon as possible.!"}
+    {"role": "customer" , "content":"I have been charged twice in same order..My card number is 4111 1111 1111 1111 .. Please check and refund my amount as soon as possible.!"},
 
 ]   
+ticket = create_ticket(
+    customer="Shourya",
+    order_id = "ORD-4521",
+    issue="Charged twice", 
+    category = "billing",
+    contact="shourya@gmail.com",
+    priority="P1",
+    severity="critical"
+)
+
+ticket.assigned_to="Priya"
+ticket.due_at=get_due_time(ticket)
+
+note = build_handoff(ticket,history)
+print(note)
+print()
+
+for secret in ["shourya@gmail.com" , "9876543210" , "4111 1111 1111 1111"]:
+    print("LEAK" if secret in note else "SAFE" , "-" , secret)
+
+clock.clear_time()
