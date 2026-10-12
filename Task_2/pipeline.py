@@ -32,7 +32,32 @@ def process_conversation(history , session_id):
         })
 
         ticket = create_ticket(
-            customer = info["customer_name"],
-            order_id = issue["order_id"],
-            
+            customer=info["customer_name"],
+            order_id=issue["order_id"],
+            product=issue["product"],
+            issue=issue["issue"],
+            category=issue["category"],
+            evidence=issue["evidence"],
+            contact=info["contact"],
+            severity=issue["severity"],
+            impact=issue["impact"],
+            session_id=session_id,
         )
+        link_ticket(kind,other,ticket)
+
+        if kind == "duplicate":
+            results.append({"status":"duplicate" , "ticket" : ticket , "duplicate_of" : other.ticket_id})
+            continue
+
+        score , priority , parts = calculate_priority(ticket)
+        ticket.priority_score = score
+        ticket.priority = priority
+        ticket.due_at = get_due_time(ticket)
+        assign_ticket(ticket)
+
+        results.append({
+            "status" : "created",
+            "ticket" : ticket,
+            "handoff" : build_handoff(ticket , history),
+        })
+    return results
