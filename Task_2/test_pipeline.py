@@ -13,11 +13,10 @@ def chat(text):
 def show(title , results):
     print(title)
     for r in results:
-        t = r.get("tickets")
+        t = r.get("ticket")
         if t:
             print(f" {r['status']:10} {t.ticket_id} {t.category:9} {t.priority}")
-            f"{t.queue:8} {str(t.assigned_to):6} group={t.group_id} dup_of{t.duplicate_of}"
-
+            print(f"{t.queue:8} {str(t.assigned_to):6} group={t.group_id} dup_of={t.duplicate_of}")
         else:
             print(f"  {r['status']:10} missing={r.get('missing')} | {r.get('question')}")
     print()
