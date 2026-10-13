@@ -43,7 +43,7 @@ def process_conversation(history , session_id):
             impact=issue["impact"],
             session_id=session_id,
         )
-        link_ticket(kind,other,ticket)
+        link_ticket(kind=kind,other=other,ticket=ticket)
 
         if kind == "duplicate":
             results.append({"status":"duplicate" , "ticket" : ticket , "duplicate_of" : other.ticket_id})
