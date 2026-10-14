@@ -59,3 +59,54 @@ def check_message(expect , results):
             problems.append(f"duplicate_of: expected {expect['duplicate_of']}, got {got}")
 
     return problems
+
+def run_case(case):
+    reset(case.get("setup" , {}))
+    start = datetime.fromisoformat(case["start"]).replace(tzinfo = clock.TIMEZONE)
+    problems = []
+
+    for number , step  in enumerate(case["steps"] , start=1):
+        clock.set_time(start + timedelta(minutes=step["minutes"]))
+
+        if "set_sla_hours" in step:
+            config.SLA_HOURS.update(step["set_sla_hours"])
+
+        found = []
+        if "text" in step:
+            history = [{"role": "customer" , "content": step["text"]}]
+            results = process_conversation(history , case["name"])
+            found = check_message(step.get("expect",{}) , results)
+        elif step.get("sla_check"):
+            events = [e["event"] for e in check_all_tickets()]
+            if events != step["expect_events"]:
+                found = [f"events: expected {step['expect_events']} , got {events}"]
+        problems += [f"step {number}: {p}" for p in found]
+            
+    return problems
+            
+            
+def main():
+    with open(CASES_FILES, encoding="utf-8") as f:
+        cases = json.load(f)
+            
+    passed = 0
+    for case in cases:
+        try:
+            problems = run_case(case)
+        except Exception as e:
+            problems = [f"crashed: {e}"]
+            
+        if problems:
+            print(f"FAIL  {case['name']}")
+            for p in problems:
+                print(f"      - {p}")
+        else:
+            print(f"PASS  {case['name']}")
+            passed += 1
+            
+    clock.clear_time()
+    print(f"\n{passed}/{len(cases)} passed")
+            
+            
+if __name__ == "__main__":
+    main()
