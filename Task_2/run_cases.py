@@ -27,3 +27,35 @@ def reset(setup):
             agent["available"] = False
         if agent["name"] in setup.get("max_load" , {}):
             agent["max_load"] = setup["max_load"][agent["name"]]
+
+def check_message(expect , results):
+    problems = []
+    statuses = [r["status"] for r in results]
+    created = [r["ticket"] for r in results if r["status"] == "created"]    
+    if "statuses" in expect and statuses != expect["statuses"]:
+        problems.append(f"statuses: expected = {expect['statuses']} , got = {statuses}")
+
+    if "queues" in expect:
+        got = [t.queue for t in created]
+        if got != expect["queues"]:
+            problems.append(f"queues: expected = {expect['queues']} , got = {got}")
+    if "queues_in" in expect:
+        got = [t.queue for t in created]
+        if not got or any(q not in expect["queues_in"] for q in got):
+            problems.append(f"queues: expected each in {expect['queues_in']}, got {got}")
+    if "assigned" in expect:
+        got = [t.assigned_to for t in created]
+        if got != expect["assigned"]:
+            problems.append(f"assigned: expected {expect['assigned']}, got {got}")
+    if "same_group" in expect:
+        groups = {t.group_id for t in created}
+        if expect["same_group"] and (len(created) < 2 or len(groups) != 1 or None in groups):
+            problems.append(f"group: expected one shared group, got {groups}")
+        if not expect["same_group"] and groups != {None}:
+            problems.append(f"group: expected no group, got {groups}")
+    if "duplicate_of" in expect:
+        got = [r.get("duplicate_of") for r in results if r["status"] == "duplicate" ]
+        if got != [expect["duplicate_of"]]:
+            problems.append(f"duplicate_of: expected {expect['duplicate_of']}, got {got}")
+
+    return problems
