@@ -19,4 +19,11 @@ DEFAULT_AGENTS = copy.deepcopy(config.AGENTS)
 def reset(setup):
     tickets.clear()
     config.SLA_HOURS.clear()
-    
+    config.SLA_HOURS.update(DEFAULT_SLA)
+    config.AGENTS[:] = copy.deepcopy(DEFAULT_AGENTS)
+    config.SLA_HOURS.update(setup.get("sla_hours" , {}))
+    for agent in config.AGENTS:
+        if setup.get("all_unavailable") or agent["name"] in setup.get("unavailable" , []):
+            agent["available"] = False
+        if agent["name"] in setup.get("max_load" , {}):
+            agent["max_load"] = setup["max_load"][agent["name"]]
