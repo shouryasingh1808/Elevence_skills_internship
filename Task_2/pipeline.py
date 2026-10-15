@@ -7,7 +7,7 @@ from Task_2.sla import get_due_time
 from Task_2.routing import assign_ticket
 from Task_2.handoff import build_handoff
 
-def process_conversation(history , session_id):
+def process_conversation(history , session_id, sentiment="neutral"):
     info = extract_ticket_info(history)
     if info["failed"]:
         return [{
@@ -42,6 +42,7 @@ def process_conversation(history , session_id):
             severity=issue["severity"],
             impact=issue["impact"],
             session_id=session_id,
+            sentiment = sentiment
         )
         link_ticket(kind=kind,other=other,ticket=ticket)
 
