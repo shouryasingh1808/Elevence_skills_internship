@@ -93,7 +93,7 @@ def extract_ticket_info(history):
 FIELD_QUESTIONS = {
     "order_id" :"your order ID",
     "issue" : "a short description of your problem",
-    "contact" : "an email or phone number here we can reach you",
+    "contact" : "an email or phone number where we can reach you",
 }
 
 def find_missing(contact,issue):

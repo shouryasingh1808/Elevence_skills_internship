@@ -28,8 +28,7 @@ def handle_message(session_id, message):
     outcomes = []
 
     if state.escalated and session_id not in ticketed:
-        outcomes = process_conversation(state.history , session_id , result["analysis"]["sentiment"])
-
+        extra, outcomes = create_tickets_for(session_id, result["analysis"]["sentiment"])
     reply = result["reply"]
     if extra:
         reply = reply + "\n\n" + "\n".join(extra)

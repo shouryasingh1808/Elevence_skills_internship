@@ -1,0 +1,75 @@
+[
+  {
+    "name": "repeated_negative_creates_ticket",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "My order ORD-4521 has not arrived for 3 days, I am very disappointed", "expect": {"tickets_created": 0}},
+      {"minutes": 2, "text": "No reply from you, this is terrible service", "expect": {"tickets_created": 0}},
+      {"minutes": 4, "text": "This is the worst support ever, I am very angry. My email is a@b.com", "expect": {"tickets_created": 1, "reply_has": "TCK-"}}
+    ]
+  },
+  {
+    "name": "ticket_created_only_once",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "My order ORD-4521 has not arrived for 3 days, I am very disappointed", "expect": {"tickets_created": 0}},
+      {"minutes": 2, "text": "No reply from you, this is terrible service", "expect": {"tickets_created": 0}},
+      {"minutes": 4, "text": "This is the worst support ever, I am very angry. My email is a@b.com", "expect": {"tickets_created": 1}},
+      {"minutes": 6, "text": "Still waiting for help, this is unacceptable", "expect": {"tickets_created": 0}}
+    ]
+  },
+  {
+    "name": "calm_high_risk_then_missing_info",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "Hello, I noticed two charges of Rs 499 on my statement for the same order. Could you please look into it?", "expect": {"tickets_created": 0, "reply_has": "order ID"}},
+      {"minutes": 2, "text": "The order is ORD-777 and my email is c@d.com", "expect": {"tickets_created": 1, "priority": "P1"}}
+    ]
+  },
+  {
+    "name": "timeout_creates_ticket",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "My order ORD-4521 has not arrived for 3 days, I am very disappointed. My email is a@b.com", "expect": {"tickets_created": 0}},
+      {"minutes": 5, "text": "Still no reply, this is bad service", "expect": {"tickets_created": 0}},
+      {"minutes": 10, "timeouts": true, "expect": {"timeouts": 0, "tickets_created": 0}},
+      {"minutes": 16, "timeouts": true, "expect": {"timeouts": 1, "tickets_created": 1}}
+    ]
+  },
+  {
+    "name": "account_compromise_sunday_night",
+    "start": "2026-10-04T22:30:00",
+    "steps": [
+      {"minutes": 0, "text": "Someone logged into my account from another country. My order ORD-8001 is affected. My email is a@b.com", "expect": {"tickets_created": 1, "priority": "P1", "queue": "on_call_queue"}}
+    ]
+  },
+  {
+    "name": "small_complaint_no_ticket",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "My order is one day late. My email is a@b.com", "expect": {"tickets_created": 0}}
+    ]
+  },
+  {
+    "name": "two_sessions_are_isolated",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "session": "a", "text": "My order ORD-4521 has not arrived for 3 days, I am very disappointed", "expect": {"tickets_created": 0}},
+      {"minutes": 1, "session": "b", "text": "Hello, I need some help with my order", "expect": {"tickets_created": 0}},
+      {"minutes": 2, "session": "a", "text": "No reply from you, this is terrible service", "expect": {"tickets_created": 0}},
+      {"minutes": 4, "session": "a", "text": "This is the worst support ever, I am very angry. My email is a@b.com", "expect": {"tickets_created": 1}},
+      {"minutes": 5, "session": "b", "text": "Thanks, can you tell me the status?", "expect": {"tickets_created": 0}}
+    ]
+  },
+  {
+    "name": "sla_runs_on_engine_tickets",
+    "start": "2026-10-06T11:00:00",
+    "setup": {"sla_hours": {"P1": 4, "P2": 4, "P3": 4, "P4": 4}},
+    "steps": [
+      {"minutes": 0, "text": "I was charged twice for order ORD-3001. My email is a@b.com", "expect": {"tickets_created": 1}},
+      {"minutes": 179, "timeouts": true, "expect": {"sla_events": []}},
+      {"minutes": 180, "timeouts": true, "expect": {"sla_events": ["warning"]}},
+      {"minutes": 241, "timeouts": true, "expect": {"sla_events": ["escalated"]}}
+    ]
+  }
+]

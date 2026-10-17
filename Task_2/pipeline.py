@@ -39,7 +39,7 @@ def process_conversation(history , session_id, sentiment="neutral" , risk_type =
             category=issue["category"],
             evidence=issue["evidence"],
             contact=info["contact"],
-            severity=issue["severity"],
+            severity=severity,
             impact=issue["impact"],
             session_id=session_id,
             sentiment = sentiment
