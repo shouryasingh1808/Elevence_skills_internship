@@ -7,7 +7,7 @@ ticketed = set()
 def create_tickets_for(session_id , sentiment):
     state = get_state(session_id)
     lines = []
-    outcomes = process_conversation(state.history , session_id , sentiment)
+    outcomes = process_conversation(state.history , session_id , sentiment , state.risk_type)
     for r in outcomes:
         if r["status"] == "created":
             t = r["ticket"]

@@ -7,7 +7,7 @@ from Task_2.sla import get_due_time
 from Task_2.routing import assign_ticket
 from Task_2.handoff import build_handoff
 
-def process_conversation(history , session_id, sentiment="neutral"):
+def process_conversation(history , session_id, sentiment="neutral" , risk_type ="none"):
     info = extract_ticket_info(history)
     if info["failed"]:
         return [{
@@ -30,7 +30,7 @@ def process_conversation(history , session_id, sentiment="neutral"):
             "contact" : info["contact"],
             "issue" : issue["issue"],
         })
-
+        severity = "critical" if risk_type!="none" else issue["severity"]
         ticket = create_ticket(
             customer=info["customer_name"],
             order_id=issue["order_id"],

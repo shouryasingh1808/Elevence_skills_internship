@@ -11,11 +11,15 @@ class ConversationState:
     negative_since: object = None
     resolved: bool = False
     escalated: bool = False
+    risk_type: str = "none"
 
     def add_message(self, role, content):  
         self.history.append({"role": role, "content": content})
 
     def update_with_analysis(self, analysis):
+        risk = analysis.get("risk_type" , "none")
+        if risk != "none":
+            self.risk_type = risk
         sentiment = analysis["sentiment"]
         if sentiment in config.NEGATIVE_LABELS:
             self.negative_streak += 1
