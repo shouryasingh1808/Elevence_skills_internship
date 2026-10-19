@@ -1,0 +1,11 @@
+---
+doc_id: phone_troubleshooting
+title: Phone Troubleshooting Guide
+version: 1
+product: phone
+region: global
+access: public
+effective: 2026-01-01
+expires: none
+---
+If your phone battery drains fast,You may turn on the battery saving mode , turn of the location or remove apps which uses battery most. and If the problem continues, update the phone software or contact the customer support.

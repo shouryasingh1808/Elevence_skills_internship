@@ -36,8 +36,7 @@ Everything is in `config.py`: business days and hours, the number of negative me
 
 Result: **14/14 passed.** Cases cover sarcasm (English and Hinglish), calm high-risk complaints, after-hours requests, repeated negative messages and the 15-minute boundary (15 minutes does not escalate, 16 does).
 
-![Task 1 tests](../docs/screenshots/task1_run_cases.png)
-
+![Task 1 tests](../Docs/screenshots/task1_run_cases.png) 
 ## Known limits
 
 - `LOW_CONFIDENCE_THRESHOLD` exists in `config.py` but is not used yet (planned with Task 6).

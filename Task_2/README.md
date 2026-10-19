@@ -40,8 +40,7 @@ One message with two problems creates two tickets.
 
 Result: **15/15 passed.** Cases cover two problems in one message, missing details, duplicates (inside and outside the 24-hour window), different orders, unavailable agents and teams, max load, after-hours requests, prompt injection, SLA warning and breach, a weekend and an SLA change at runtime.
 
-![Task 2 tests](../docs/screenshots/task2_run_cases.png)
-
+![Task 2 tests](../Docs/screenshots/task2_run_cases.png)
 ## Known limits
 
 - Tickets are stored in memory and are lost when the app restarts.

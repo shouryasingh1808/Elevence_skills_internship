@@ -1,0 +1,11 @@
+---
+doc_id: warranty_policy
+title: Warranty Policy
+version: 1
+product: all
+region: india
+access: public
+effective: 2026-01-01
+expires: none
+---
+All products come with a 24 month warranty from the date of purchase , there are free pickups and delivery for repairs. The warranty covers manufacturing defects only and does not cover accidental damage.
