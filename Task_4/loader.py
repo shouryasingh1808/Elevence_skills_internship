@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from datetime import date
+from Task_4.config import KB_FOLDER
 
 def split_document(path):
     raw = Path(path).read_text(encoding="utf-8")
@@ -21,3 +22,16 @@ def convert_types(meta):
     meta["effective"] = date.fromisoformat(meta["effective"])
     meta["expires"] = None if meta["expires"].lower() == "none" else date.fromisoformat(meta["expires"])
     return meta
+
+def load_documents(folder=KB_FOLDER):
+    docs = []
+    for path in sorted(Path(folder).glob("*.txt")):
+        try:
+            header, body = split_document(path)
+            meta = convert_types(parse_header(header))
+            meta["text"] = body
+            meta["file"] = path.name
+            docs.append(meta)
+        except Exception as e:
+            print(f"[skipped {path.name}: {e}]")
+    return docs
