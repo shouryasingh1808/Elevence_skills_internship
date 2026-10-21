@@ -10,5 +10,4 @@ def resolve_conflicts(results , user_region):
         current = best.get(doc["doc_id"])
         if current is None or rank_key(doc, user_region) > rank_key(current[1], user_region):
             best[doc["doc_id"]] = (score, doc)
-        return sorted(best.values() , key=lambda x : x[0] , reverse=True)
-    
+    return sorted(best.values() , key=lambda x : x[0] , reverse=True)
