@@ -1,4 +1,4 @@
-"""Task 3 config: Access_levels , tells location of knowledge base documents , rules of searches.."""
+"""Task 4 config: Access_levels , tells location of knowledge base documents , rules of searches.."""
 
 from pathlib import Path
 
