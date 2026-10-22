@@ -19,6 +19,11 @@ def answer_question(question , user_level=DEFAULT_USER_LEVEL , region = None , d
     results = resolve_conflicts(search(question , pool ), region)
     if not results:
         return {"status": "refused", "answer": REFUSAL + ".", "sources": []}
+    products = {d["product"].lower() for s, d in results if d["product"].lower() != "all"}
+    if product is None and len(products) > 1:
+        return {"status": "clarify",
+                "answer": "Which product is this about: " + " or ".join(sorted(products)) + "?",
+                "sources": []}
 
     context = build_context(results)
     answer = generate_answer(question , context)
