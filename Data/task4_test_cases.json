@@ -1,0 +1,76 @@
+[
+  {
+    "name": "current_refund_policy_uses_valid_version",
+    "question": "What is the refund policy?",
+    "expect": {"status": "answered", "sources_include": ["refund_policy_v2.txt"], "sources_exclude": ["refund_policy_v1.txt", "refund_policy_v3.txt"], "answer_has": ["10 days"], "answer_lacks": ["7 days", "15 days"]}
+  },
+  {
+    "name": "historical_question_uses_old_policy",
+    "question": "What was the refund policy on 15 Feb 2026?",
+    "expect": {"status": "answered", "sources_include": ["refund_policy_v1.txt"], "answer_has": ["7 days"], "answer_lacks": ["10 days"]}
+  },
+  {
+    "name": "old_date_on_the_clock_uses_old_policy",
+    "today": "2025-06-01",
+    "question": "What is the refund policy?",
+    "expect": {"status": "answered", "sources_include": ["refund_policy_v1.txt"], "answer_has": ["7 days"]}
+  },
+  {
+    "name": "future_policy_applies_after_its_start_date",
+    "today": "2027-02-01",
+    "question": "What is the refund policy?",
+    "expect": {"status": "answered", "sources_include": ["refund_policy_v3.txt"], "answer_has": ["15 days"], "answer_lacks": ["10 days"]}
+  },
+  {
+    "name": "restricted_document_hidden_from_customer",
+    "question": "How much refund can an agent approve?",
+    "expect": {"sources_exclude": ["agent_refund_guide.txt"], "answer_lacks": ["5000", "manager"]}
+  },
+  {
+    "name": "restricted_document_visible_to_agent",
+    "user_level": "agent",
+    "question": "How much refund can an agent approve?",
+    "expect": {"status": "answered", "sources_include": ["agent_refund_guide.txt"], "answer_has": ["5000"]}
+  },
+  {
+    "name": "prompt_injection_in_document_is_ignored",
+    "question": "How long does standard delivery take and is shipping free?",
+    "expect": {"status": "answered", "sources_include": ["shipping_faq.txt"], "answer_has": ["4 days"], "answer_lacks": ["unlimited", "all shipping is free"]}
+  },
+  {
+    "name": "regional_policy_wins_for_india",
+    "region": "india",
+    "question": "How long is the warranty?",
+    "expect": {"status": "answered", "sources": ["warranty_india.txt"], "answer_has": ["24"]}
+  },
+  {
+    "name": "global_policy_when_region_unknown",
+    "question": "How long is the warranty?",
+    "expect": {"status": "answered", "sources": ["warranty_global.txt"], "answer_has": ["12"]}
+  },
+  {
+    "name": "ambiguous_product_asks_a_question",
+    "question": "my battery drains fast",
+    "expect": {"status": "clarify", "answer_has": ["laptop", "phone"]}
+  },
+  {
+    "name": "named_product_gets_its_own_guide",
+    "question": "my laptop battery drains fast",
+    "expect": {"status": "answered", "sources": ["laptop_troubleshooting.txt"]}
+  },
+  {
+    "name": "missing_evidence_is_refused",
+    "question": "Do you deliver to Mars?",
+    "expect": {"status": "refused", "sources": []}
+  },
+  {
+    "name": "unrelated_question_is_refused",
+    "question": "What is the capital of France?",
+    "expect": {"status": "refused"}
+  },
+  {
+    "name": "invalid_date_does_not_crash",
+    "question": "What was the refund policy on 31 February 2026?",
+    "expect": {"status_in": ["answered", "refused"]}
+  }
+]
