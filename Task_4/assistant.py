@@ -30,6 +30,7 @@ def answer_question(question , user_level=DEFAULT_USER_LEVEL , region = None , d
     if answer is None:
         return {"status": "error", "answer": None, "sources": []}
     answer = normalize_citations(answer)
+    answer = " ".join(answer.split())
     if REFUSAL in answer.replace("’", "'"):
         return {"status": "refused", "answer": REFUSAL + ".", "sources": []}
     problems = check_citations(answer , len(results)) + check_numbers(answer , results)
