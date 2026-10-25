@@ -1,4 +1,4 @@
-"""Task 4 run_cases: runs the knowledge assistant test cases and shows PASS/FAIL"""
+"""Task 4 run_cases: runs the knowledge assistant test cases and shows Pass/Fail..."""
 
 import json 
 from datetime import datetime
