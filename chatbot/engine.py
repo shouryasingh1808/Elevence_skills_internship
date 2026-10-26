@@ -4,6 +4,15 @@ from Task_2.sla import check_all_tickets
 
 ticketed = set()
 
+def format_kb_reply(kb):
+    if kb["status"] == "answered":
+        return kb["answer"] + "\n\nSources: " + " , ".join(kb["sources"])
+    if kb["status"] == "clarify":
+        return kb["answer"]
+    if kb["status"] == "refused":
+        return kb["answer"] + "A support agent can help you this"
+    return "Sorry, I could not dinf a reliable answer to that. A support agent will help you."
+    
 def create_tickets_for(session_id , sentiment):
     state = get_state(session_id)
     lines = []
