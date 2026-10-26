@@ -11,6 +11,10 @@ cases = [
     ("I was charged twice for my order", "complaint"),
     ("My order is late and I want to know what your refund policy is", "complaint"),
     ("This is the worst service ever", "complaint"),
+    ("How do I fix a fast draining battery?", "question"),
+    ("How can I set up my new phone?", "question"),
+    ("My laptop battery drains fast", "complaint"),
+    ("I was charged twice, how do I get my money back?", "complaint"),
 ]
 
 right = 0
