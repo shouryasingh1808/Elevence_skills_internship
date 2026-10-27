@@ -39,8 +39,21 @@ def check_step(expect, created, reply, out):
         if got != expect["queue"]:
             problems.append(f"queue: expected {expect['queue']}, got {got}")
 
-    if "reply_has" in expect and expect["reply_has"] not in reply:
-        problems.append(f"reply: expected it to contain '{expect['reply_has']}'")
+    for word in expect.get("reply_has" , []):
+        if word not in reply:
+            problems.append(f"reply: expected it to contain '{word}'")
+    for word in expect.get("reply_lacks" , []):
+        if word in reply:
+            problems.append(f"reply: must not contain '{word}'")
+
+    kb = out.get("kb")
+    if "kb_used" in expect and (kb is not None) != expect["kb_used"]:
+        problems.append(f"kb_used: expected {expect['kb_used']} , got {kb is not None}")
+
+    if "kb_status" in expect:
+        got = kb["status"] if kb else None 
+        if got != expect["kb_status"]:
+            problems.append(f"kb_status: expected {expect['kb_status']} , got {got}")
 
     if "timeouts" in expect:
         got = len(out.get("timeouts", []))
@@ -67,7 +80,7 @@ def run_case(case):
             result = handle_message(step.get("session", "s1"), step["text"])
             created = [o["ticket"] for o in result["tickets"] if o["status"] == "created"]
             reply = result["reply"]
-            out = {}
+            out = {"kb" : result["kb"]}
         else:
             out = run_timeouts()
             created = [o["ticket"] for o in out["tickets"] if o["status"] == "created"]

@@ -5,7 +5,7 @@
     "steps": [
       {"minutes": 0, "text": "My order ORD-4521 has not arrived for 3 days, I am very disappointed", "expect": {"tickets_created": 0}},
       {"minutes": 2, "text": "No reply from you, this is terrible service", "expect": {"tickets_created": 0}},
-      {"minutes": 4, "text": "This is the worst support ever, I am very angry. My email is a@b.com", "expect": {"tickets_created": 1, "reply_has": "TCK-"}}
+      {"minutes": 4, "text": "This is the worst support ever, I am very angry. My email is a@b.com", "expect": {"tickets_created": 1, "reply_has": ["TCK-"]}}
     ]
   },
   {
@@ -22,7 +22,7 @@
     "name": "calm_high_risk_then_missing_info",
     "start": "2026-10-06T11:00:00",
     "steps": [
-      {"minutes": 0, "text": "Hello, I noticed two charges of Rs 499 on my statement for the same order. Could you please look into it?", "expect": {"tickets_created": 0, "reply_has": "order ID"}},
+      {"minutes": 0, "text": "Hello, I noticed two charges of Rs 499 on my statement for the same order. Could you please look into it?", "expect": {"tickets_created": 0, "reply_has": ["order ID"]}},
       {"minutes": 2, "text": "The order is ORD-777 and my email is c@d.com", "expect": {"tickets_created": 1, "priority": "P1"}}
     ]
   },

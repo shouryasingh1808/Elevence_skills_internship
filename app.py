@@ -14,7 +14,6 @@ if "session_id" not in st.session_state:
     st.session_state.chat = []
     st.session_state.last = None
 
-# Sidebar: demo ke liye fake time aur timeouts
 with st.sidebar:
     use_fake = st.checkbox("Use fake time")
     if use_fake:
