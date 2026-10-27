@@ -2,7 +2,7 @@
 
 A customer-support chatbot that understands how the customer feels, escalates risky or unresolved conversations, and turns them into prioritised support tickets with SLA tracking.
 
-Built with Python, Streamlit and the Groq LLM API (`openai/gpt-oss-120b`).
+Built with Python,Streamlit and the Groq LLM API (`openai/gpt-oss-120b`).
 
 **Status:** Task 1 and Task 2 are done and tested. Tasks 3 to 6 are in progress.
 
