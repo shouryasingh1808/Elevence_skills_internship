@@ -7,12 +7,12 @@ ticketed = set()
 
 def format_kb_reply(kb):
     if kb["status"] == "answered":
-        return kb["answer"] + "\n\nSources: " + " , ".join(kb["sources"])
+        return kb["answer"] + "\n\nSources: " + ", ".join(kb["sources"])
     if kb["status"] == "clarify":
         return kb["answer"]
     if kb["status"] == "refused":
-        return kb["answer"] + "A support agent can help you this"
-    return "Sorry, I could not dinf a reliable answer to that. A support agent will help you."
+        return kb["answer"] + "A support agent can help you with this"
+    return "Sorry, I could not find a reliable answer to that. A support agent will help you."
     
 def create_tickets_for(session_id , sentiment):
     state = get_state(session_id)
@@ -43,7 +43,7 @@ def handle_message(session_id, message):
 
     if state.escalated and session_id not in ticketed:
         extra, outcomes = create_tickets_for(session_id, analysis["sentiment"])
-    reply = result["reply"]
+    reply = format_kb_reply(kb) if kb is not None else result["reply"]
     if extra:
         reply = reply + "\n\n" + "\n".join(extra)
 
