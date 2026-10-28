@@ -2,17 +2,18 @@ from Task_1.pipeline import handle_message as task1_message , get_state , check_
 from Task_2.pipeline import process_conversation
 from Task_2.sla import check_all_tickets
 from Task_4.assistant import answer_question
+from Task_4.config import DEFAULT_USER_LEVEL
 
 ticketed = set()
 
 def format_kb_reply(kb):
     if kb["status"] == "answered":
-        return kb["answer"] + "\n\nSources: " + ", ".join(kb["sources"])
+        return kb["answer"] + "\n\nSources: " + " , ".join(kb["sources"])
     if kb["status"] == "clarify":
         return kb["answer"]
     if kb["status"] == "refused":
-        return kb["answer"] + "A support agent can help you with this"
-    return "Sorry, I could not find a reliable answer to that. A support agent will help you."
+        return kb["answer"] + "A support agent can help you this"
+    return "Sorry, I could not dinf a reliable answer to that. A support agent will help you."
     
 def create_tickets_for(session_id , sentiment):
     state = get_state(session_id)
@@ -30,14 +31,14 @@ def create_tickets_for(session_id , sentiment):
             lines.append(r["question"])
     return lines, outcomes
 
-def handle_message(session_id, message):
+def handle_message(session_id, message , user_level = DEFAULT_USER_LEVEL , region = None):
     result = task1_message(session_id , message)
     state = get_state(session_id)
     analysis = result["analysis"]
     kb = None
 
     if analysis["intent"] == "question" and not result["triggers"] and analysis["risk_type"] == "none":
-        kb = answer_question(message)
+        kb = answer_question(message , user_level = user_level , region=region)
     extra = []
     outcomes = []
 

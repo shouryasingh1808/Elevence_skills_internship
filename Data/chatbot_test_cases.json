@@ -71,5 +71,78 @@
       {"minutes": 180, "timeouts": true, "expect": {"sla_events": ["warning"]}},
       {"minutes": 241, "timeouts": true, "expect": {"sla_events": ["escalated"]}}
     ]
+  },
+    {
+    "name": "calm_question_uses_knowledge_base",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "What is the refund policy?", "expect": {"kb_used": true, "kb_status": "answered", "reply_has": ["Sources:", "refund_policy_v2.txt"], "tickets_created": 0}}
+    ]
+  },
+  {
+    "name": "shipping_question_ignores_injection",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "How long does standard delivery take and is shipping free?", "expect": {"kb_used": true, "kb_status": "answered", "reply_has": ["Sources:", "shipping_faq.txt"], "reply_lacks": ["unlimited", "all shipping is free"]}}
+    ]
+  },
+  {
+    "name": "complaint_does_not_use_knowledge_base",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "My order ORD-4521 has not arrived for 5 days", "expect": {"kb_used": false, "reply_lacks": ["Sources:"]}}
+    ]
+  },
+  {
+    "name": "risky_message_skips_knowledge_base",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "Someone logged into my account from another country. What is your refund policy?", "expect": {"kb_used": false, "reply_lacks": ["Sources:"], "reply_has": ["order ID"]}}
+    ]
+  },
+  {
+    "name": "restricted_document_not_leaked_through_engine",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "How much refund can an agent approve?", "expect": {"reply_lacks": ["5000", "manager approval", "agent_refund_guide"]}}
+    ]
+  },
+  {
+    "name": "ambiguous_question_asks_which_product",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "How do I fix a fast draining battery?", "expect": {"kb_used": true, "kb_status": "clarify", "reply_has": ["laptop", "phone"]}}
+    ]
+  },
+  {
+    "name": "named_product_question_gets_its_guide",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "How do I fix a fast draining battery on my laptop?", "expect": {"kb_used": true, "kb_status": "answered", "reply_has": ["laptop_troubleshooting.txt"]}}
+    ]
+  },
+  {
+    "name": "unknown_topic_is_refused_with_agent_help",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "Do you deliver to Mars?", "expect": {"kb_used": true, "kb_status": "refused", "reply_has": ["support agent"]}}
+    ]
+  },
+  {
+    "name": "question_before_complaint_in_same_session",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "What is the refund policy?", "expect": {"kb_used": true, "tickets_created": 0}},
+      {"minutes": 2, "text": "My order ORD-4521 has not arrived for 3 days, I am very disappointed", "expect": {"kb_used": false, "tickets_created": 0}},
+      {"minutes": 4, "text": "No reply from you, this is terrible service", "expect": {"kb_used": false, "tickets_created": 0}},
+      {"minutes": 6, "text": "This is the worst support ever, I am very angry. My email is a@b.com", "expect": {"kb_used": false, "tickets_created": 1}}
+    ]
+  },
+  {
+    "name": "angry_customer_question_skips_knowledge_base",
+    "start": "2026-10-06T11:00:00",
+    "steps": [
+      {"minutes": 0, "text": "This service is terrible and I am furious! What is the refund policy?", "expect": {"kb_used": false, "reply_lacks": ["Sources:"]}}
+    ]
   }
 ]
