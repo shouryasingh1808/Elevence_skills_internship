@@ -59,9 +59,11 @@ def check_citations(answer , source_count):
             problems.append(f"unknown source [{n}]")
     return problems
 
+def numbers_in(text):
+    text = re.sub(r"(?<=\d),(?=\d{3}\b)", "", text)
+    return set(re.findall(r"\d+", text))
+
 def check_numbers(answer , results):
     clean = re.sub(r"\[\d+\]", "", answer)
-    answer_numbers = set(re.findall(r"\d+", clean))
     source_text = " ".join(d["text"] for s, d in results)
-    source_numbers = set(re.findall(r"\d+", source_text))
-    return [f"number {n} not in sources" for n in sorted(answer_numbers - source_numbers)]
+    return [f"number {n} not in sources" for n in sorted(numbers_in(clean) - numbers_in(source_text))]
