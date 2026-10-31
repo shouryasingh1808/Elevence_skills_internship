@@ -10,3 +10,7 @@ INCOMING = DATA/"incoming"
 QUARANTINE = DATA/"quarantine"
 VERSIONS = DATA/"versions"
 MANIFEST_FILE = (DATA / "pipeline_manifest.json")
+
+def ensure_folders():
+    for folder in (INCOMING , QUARANTINE , VERSIONS):
+        folder.mkdir(parents=True , exist_ok=True)
