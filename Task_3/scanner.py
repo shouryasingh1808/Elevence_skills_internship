@@ -32,13 +32,20 @@ def ensure_baseline():
 def scan_incoming():
     manifest = ensure_baseline()
     known = manifest["files"]
+    by_hash = {h: name for name, h in known.items()}
     report =[]
 
     for path in sorted(INCOMING.glob("*.txt")):
         h = file_hash(path)
 
-        if path.name is known:
+        if path.name in known:
             status = "unchanged" if known[path.name] == h else "modified"
             report.append({"file": path.name, "status": status, "hash": h, "duplicate_of": None})
             continue
+
+        if h in by_hash:
+            report.append({"file": path.name, "status": "duplicate", "hash": h, "duplicate_of": by_hash[h]})
+        else:
+            by_hash[h] = path.name
+            report.append({"file": path.name, "status": "new", "hash": h , "duplicate_of": None}) 
     return report

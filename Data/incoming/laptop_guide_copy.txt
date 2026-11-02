@@ -1,0 +1,11 @@
+---
+doc_id: laptop_troubleshooting
+title: Laptop Troubleshooting Guide
+version: 1
+product: laptop
+region: global
+access: public
+effective: 2026-01-01
+expires: none
+---
+If your laptop battery drains fast, lower the screen brightness and close apps running in the background. If the problem continues, run the battery health check in the settings menu and contact support if the health is below 80 percent.
