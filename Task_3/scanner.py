@@ -3,7 +3,7 @@
 import hashlib
 from pathlib import Path
 import json
-from Task_3.config import MANIFEST_FILE , ACTIVE_KB
+from Task_3.config import MANIFEST_FILE , ACTIVE_KB , INCOMING
 
 def file_hash(path):
     text = Path(path).read_text(encoding="utf-8").replace("\r\n", "\n").strip()  # This is only because i regularly shifts on Mac and PC..
@@ -28,3 +28,17 @@ def ensure_baseline():
          manifest["active_version"] == 1
     save_manifest(manifest)
     return manifest
+
+def scan_incoming():
+    manifest = ensure_baseline()
+    known = manifest["files"]
+    report =[]
+
+    for path in sorted(INCOMING.glob("*.txt")):
+        h = file_hash(path)
+
+        if path.name is known:
+            status = "unchanged" if known[path.name] == h else "modified"
+            report.append({"file": path.name, "status": status, "hash": h, "duplicate_of": None})
+            continue
+    return report
