@@ -1,6 +1,7 @@
 """Task 3 validator: checks a document before it may enter the knowledge base."""
 
 from Task_4.loader import parse_header , split_document
+from Task_4.config import ACCESS_LEVELS
 from datetime import date
 
 REQUIRED_FIELDS = ["doc_id", "title", "version", "product", "region", "access", "effective", "expires"]
@@ -41,4 +42,10 @@ def validate_document(path):
         elif effective is not None and expires < effective:
             problems.append("expires is before effective")
 
+    if meta["access"] not in ACCESS_LEVELS:
+        problems.append(f"access must be one of {', '.join(ACCESS_LEVELS)}, got '{meta['access']}'")
+
+    if not body:
+        problems.append("document type is empty")
+        
     return problems

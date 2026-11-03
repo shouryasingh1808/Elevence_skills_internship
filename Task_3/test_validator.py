@@ -28,6 +28,9 @@ This is a sample document.
 (folder / "bad_version.txt").write_text(GOOD.replace("version: 1", "version: one"), encoding="utf-8")
 (folder / "bad_date.txt").write_text(GOOD.replace("effective: 2026-01-01", "effective: 2026-13-45"), encoding="utf-8")
 (folder / "expires_early.txt").write_text(GOOD.replace("expires: none", "expires: 2025-12-31"), encoding="utf-8")
+(folder / "bad_access.txt").write_text(GOOD.replace("access: public", "access: agnet"), encoding="utf-8")
+(folder / "capital_access.txt").write_text(GOOD.replace("access: public", "access: Public"), encoding="utf-8")
+(folder / "empty_body.txt").write_text(GOOD.replace("This is a sample document.", ""), encoding="utf-8")
 
 for path in sorted(folder.glob("*.txt")):
     print(path.name, "->", validate_document(path))
