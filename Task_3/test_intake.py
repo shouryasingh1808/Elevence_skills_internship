@@ -48,5 +48,9 @@ write("bad_access.txt", NEW_DOC.replace("return_shipping", "extra").replace("acc
 result = intake.triage_incoming()
 for key in ("accepted", "skipped", "quarantined"):
     print(key, "->", [(i["file"], i["status"]) for i in result[key]])
+    
+print("problems ->", [(i["file"], i["problems"]) for i in result["quarantined"]])
+print("incoming now:", sorted(p.name for p in incoming.glob("*.txt")))
+print("quarantine:", sorted(p.name for p in quarantine.QUARANTINE.iterdir()))
 
 shutil.rmtree(root)
