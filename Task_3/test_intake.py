@@ -44,6 +44,9 @@ write("laptop_guide_copy.txt", read_kb("laptop_troubleshooting.txt"))          #
 write("return_shipping.txt", NEW_DOC)                                          # new, valid
 write("broken_policy.txt", "This file has no header at all.")                  # new, invalid
 write("bad_access.txt", NEW_DOC.replace("return_shipping", "extra").replace("access: public", "access: agnet"))  # new, invalid
+write("contact_info.txt", NEW_DOC.replace("return_shipping", "contact_info").replace(
+    "Return shipping is free for damaged items. For other returns the customer pays a shipping cost of Rs 99.",
+    "Write to help@shop.com or call 9876543210."))
 
 result = intake.triage_incoming()
 for key in ("accepted", "skipped", "quarantined"):
@@ -52,5 +55,7 @@ for key in ("accepted", "skipped", "quarantined"):
 print("problems ->", [(i["file"], i["problems"]) for i in result["quarantined"]])
 print("incoming now:", sorted(p.name for p in incoming.glob("*.txt")))
 print("quarantine:", sorted(p.name for p in quarantine.QUARANTINE.iterdir()))
+print("masked ->", [i["file"] for i in result["accepted"] if i["masked"]])
+print((incoming / "contact_info.txt").read_text(encoding="utf-8").splitlines()[-1])
 
 shutil.rmtree(root)

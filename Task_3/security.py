@@ -1,6 +1,7 @@
 """Task 3 security: finds prompt injection in documents and masks sensitive data."""
 
 import re
+from Task_2.masking import mask_text
 
 INJECTION_PATTERNS = [
     r"ignore (all |any |the )?(previous|prior|above|earlier) (instructions|rules|messages)",
@@ -11,6 +12,10 @@ INJECTION_PATTERNS = [
     r"(reveal|show|print) (your|the) (system )?(prompt|instructions)",
     r"pretend (to be|you are)",
 ]
+
+def mask_sensitive(text):
+    masked = mask_text(text)
+    return masked , masked != text
 
 def find_injection(text):
     normalized = " ".join(text.lower().split())
