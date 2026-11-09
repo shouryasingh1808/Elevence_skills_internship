@@ -2,6 +2,7 @@
 
 from Task_4.loader import parse_header , split_document
 from Task_4.config import ACCESS_LEVELS
+from Task_3.security import find_injection
 from datetime import date
 
 REQUIRED_FIELDS = ["doc_id", "title", "version", "product", "region", "access", "effective", "expires"]
@@ -47,5 +48,9 @@ def validate_document(path):
 
     if not body:
         problems.append("document type is empty")
-        
+    
+    found = find_injection(meta["title"] + " " + body)
+    if found :
+        problems.append(f"possible prompt injection: {len(found)} suspicious phrase pattern(s) matched")
+
     return problems

@@ -43,3 +43,6 @@ def next_working_day_start(dt=None):
     while candidate.weekday() not in BUSINESS_DAYS: 
         candidate += timedelta(days=1)
     return candidate
+
+def get_override():
+    return _time_override

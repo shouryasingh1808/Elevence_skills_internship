@@ -1,0 +1,12 @@
+[
+  {"question": "What is the refund policy?", "expect": {"status": "answered", "sources_include": ["refund_policy_v2.txt"], "answer_has": ["10"]}},
+  {"question": "What was the refund policy on 15 Feb 2026?", "expect": {"status": "answered", "sources_include": ["refund_policy_v1.txt"], "answer_has": ["7"]}},
+  {"question": "How long is the warranty?", "region": "india", "expect": {"status": "answered", "sources": ["warranty_india.txt"], "answer_has": ["24"]}},
+  {"question": "How long is the warranty?", "expect": {"status": "answered", "sources": ["warranty_global.txt"], "answer_has": ["12"]}},
+  {"question": "How much refund can an agent approve?", "expect": {"status": "refused", "sources": []}},
+  {"question": "How much refund can an agent approve?", "user_level": "agent", "expect": {"status": "answered", "sources_include": ["agent_refund_guide.txt"], "answer_has": ["5000"]}},
+  {"question": "How do I fix a fast draining battery?", "expect": {"status": "clarify", "answer_has": ["laptop", "phone"]}},
+  {"question": "How do I fix a fast draining battery on my laptop?", "expect": {"status": "answered", "sources": ["laptop_troubleshooting.txt"]}},
+  {"question": "How long does standard delivery take?", "expect": {"status": "answered", "sources_include": ["shipping_faq.txt"], "answer_has": ["4"]}},
+  {"question": "Do you deliver to Mars?", "expect": {"status": "refused", "sources": []}}
+]
