@@ -27,3 +27,5 @@ HEALTH_SAMPLE = 3
 HEALTH_MIN_ACCURACY = 0.66
 SCHEDULE_TIME = time(2,0)
 RETRY_DELAYS = [15, 30 , 60]
+ACTION_LEVELS = {"run_update": "admin", "rollback": "admin", "view_status": "agent"}
+AUDIT_FILE = DATA / "pipeline_audit.jsonl"
