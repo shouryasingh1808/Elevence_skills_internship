@@ -5,3 +5,5 @@ __pycache__/
 faiss_index/
 .idea/
 Data/escalations.jsonl
+Data/pipeline_metrics.jsonl 
+Data/pipeline_audit.jsonl

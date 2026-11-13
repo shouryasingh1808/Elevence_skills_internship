@@ -1,3 +1,6 @@
+import time
+
+from Task_3 import monitor
 from Task_1.pipeline import handle_message as task1_message , get_state , check_timeouts
 from Task_2.pipeline import process_conversation
 from Task_2.sla import check_all_tickets
@@ -32,6 +35,7 @@ def create_tickets_for(session_id , sentiment):
     return lines, outcomes
 
 def handle_message(session_id, message , user_level = DEFAULT_USER_LEVEL , region = None):
+    started = time.perf_counter()
     result = task1_message(session_id , message)
     state = get_state(session_id)
     analysis = result["analysis"]
@@ -47,13 +51,16 @@ def handle_message(session_id, message , user_level = DEFAULT_USER_LEVEL , regio
     reply = format_kb_reply(kb) if kb is not None else result["reply"]
     if extra:
         reply = reply + "\n\n" + "\n".join(extra)
-
-    return {**result, "reply": reply, "tickets": outcomes , "kb" : kb}
+    
+    output = {**result, "reply": reply, "tickets": outcomes, "kb": kb}
+    monitor.record_message(output, (time.perf_counter() - started) * 1000)
+    return output
 
 def run_timeouts():
     records = check_timeouts()
     made = []
     for record in records:
+        monitor.record("escalation"  , conditions = record["conditions"])
         session_id = record["session_id"]
         if session_id in ticketed:
             continue

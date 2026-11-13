@@ -53,8 +53,8 @@ def compare(baseline, candidate):
         reasons.append(f"grounding dropped from {baseline['grounding']:.2f} to {candidate['grounding']:.2f}")
     return reasons
 
-
-def quality_gate(candidate_folder, baseline=None, baseline_folder=ACTIVE_KB):
+def quality_gate(candidate_folder, baseline=None, baseline_folder=None):
+    baseline_folder = baseline_folder if baseline_folder is not None else ACTIVE_KB
     baseline = baseline if baseline is not None else evaluate(baseline_folder)
     candidate = evaluate(candidate_folder)
     reasons = compare(baseline, candidate)
