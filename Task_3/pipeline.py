@@ -35,7 +35,6 @@ def run_update(user="scheduler", level="admin"):
     ensure_folders()
     manifest = scanner.load_manifest()
     pending = manifest.get("pending")
-
     if pending is None:
         triage = triage_incoming()
         clear_incoming([i["file"] for i in triage["skipped"]])
@@ -44,8 +43,8 @@ def run_update(user="scheduler", level="admin"):
         if not accepted:
             return finish("nothing_to_update", True, quarantined=quarantined)
 
-        manifest = scanner.load_manifest()
-        number, folder = build_candidate(manifest["active_version"], accepted)
+        active = scanner.load_manifest()["active_version"]
+        number, folder = build_candidate(active, accepted)
         gate = quality_gate(folder)
         if gate["baseline"]["accuracy"] < MIN_BASELINE_ACCURACY:
             return finish("failed", False, error="baseline check failed, the service may be down")
@@ -54,10 +53,10 @@ def run_update(user="scheduler", level="admin"):
                 quarantine_file(Path(scanner.INCOMING) / name, gate["reasons"])
             return finish("rejected", True, reasons=gate["reasons"], quarantined=quarantined + accepted)
 
+        manifest = scanner.load_manifest()
         manifest["pending"] = {"version": number, "files": accepted}
         scanner.save_manifest(manifest)
         pending = manifest["pending"]
-
     activation = activate_version(pending["version"])
     if not activation["activated"]:
         return finish("waiting_for_window", True, reason=activation["reason"], version=pending["version"])

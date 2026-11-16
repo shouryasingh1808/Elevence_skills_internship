@@ -23,9 +23,9 @@ def ensure_baseline():
     if manifest["files"]:
         return manifest
     for path in sorted(ACTIVE_KB.glob("*.txt")):
-            manifest["files"][path.name] = file_hash(path)
+        manifest["files"][path.name] = file_hash(path)
     if manifest["active_version"] == 0:
-         manifest["active_version"] == 1
+        manifest["active_version"] = 1
     save_manifest(manifest)
     return manifest
 
