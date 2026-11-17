@@ -7,3 +7,10 @@ faiss_index/
 Data/escalations.jsonl
 Data/pipeline_metrics.jsonl 
 Data/pipeline_audit.jsonl
+
+Data/incoming/
+Data/quarantine/
+Data/versions/
+Data/pipeline_manifest.json
+Data/pipeline_audit.jsonl
+Data/pipeline_metrics.jsonl

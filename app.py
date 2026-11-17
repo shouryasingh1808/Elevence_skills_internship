@@ -10,6 +10,14 @@ from Task_4.config import ACCESS_LEVELS
 from Task_4.filters import valid_on , allowed_by_access
 from Task_4.loader import load_documents  
 
+from Task_3 import config as t3
+from Task_3 import monitor
+from Task_3.activation import run_health_check
+from Task_3.health import health_check
+from Task_3.pipeline import manual_rollback, run_update
+from Task_3.scanner import load_manifest
+from Task_3.scheduler import tick
+
 st.title("CUSTOMER SUPPORT CHATBOT 🤖")
 
 if "session_id" not in st.session_state:
@@ -85,3 +93,45 @@ with st.expander("Knowledge base (demo view)"):
             continue
         ok = "valid" if valid_on(d, today) else "not valid"
         st.write(f"{d['file']} | v{d['version']} | {d['access']} | {d['region']} | {d['product']} | {ok} today")
+
+st.header("Knowledge base admin (Task 3)")
+with st.expander("Update pipeline"):
+    st.write(f"Acting as role: **{user_level}** (change it in the sidebar)")
+
+    uploaded = st.file_uploader("Add a document to the incoming folder", type=["txt"])
+    if uploaded is not None and st.button("Save to incoming"):
+        t3.INCOMING.mkdir(parents=True, exist_ok=True)
+        (t3.INCOMING / uploaded.name).write_bytes(uploaded.getvalue())
+        st.success(f"Saved {uploaded.name} to incoming")
+
+    c1, c2, c3, c4 = st.columns(4)
+    if c1.button("Run update"):
+        with st.spinner("Running update (about 1-2 minutes)..."):
+            st.session_state.admin_result = run_update("demo_user", user_level)
+    if c2.button("Scheduler tick"):
+        with st.spinner("Running scheduler tick..."):
+            st.session_state.admin_result = tick(lambda: run_update("scheduler", "admin"))
+    if c3.button("Health check"):
+        with st.spinner("Checking..."):
+            st.session_state.admin_result = run_health_check(health_check)
+    if c4.button("Roll back"):
+        st.session_state.admin_result = manual_rollback("demo_user", user_level)
+
+    if st.session_state.get("admin_result"):
+        st.write("Result:")
+        st.json(st.session_state.admin_result)
+
+    manifest = load_manifest()
+    st.write(f"Active version: {manifest['active_version']} | previous: {manifest.get('previous_version')} | "
+             f"pending: {manifest.get('pending')} | health: {manifest.get('health', '-')}")
+    st.write("Schedule:", manifest.get("schedule", "not started"))
+    st.write("Incoming:", sorted(p.name for p in t3.INCOMING.glob("*.txt")) if t3.INCOMING.exists() else [])
+    st.write("Quarantine:", sorted(p.name for p in t3.QUARANTINE.glob("*.txt")) if t3.QUARANTINE.exists() else [])
+
+    st.write("Monitoring:")
+    st.json(monitor.summary())
+
+    if t3.AUDIT_FILE.exists():
+        st.write("Last audit entries:")
+        for line in t3.AUDIT_FILE.read_text(encoding="utf-8").splitlines()[-5:]:
+            st.code(line)
