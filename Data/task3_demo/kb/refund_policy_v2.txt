@@ -1,0 +1,12 @@
+---
+doc_id: refund_policy
+title: Refund Policy
+version: 2
+product: all
+region: global
+access: public
+effective: 2026-04-01
+expires: 2026-12-31
+---
+
+Customers can request a refund within 10 days of delivery. The refund is paid back to the original payment method within 3 working days after the returned item reaches our warehouse. Items marked as final sale cannot be returned.

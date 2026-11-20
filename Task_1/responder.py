@@ -3,7 +3,7 @@
 from datetime import datetime
 
 from Task_1.analyzer import client , MODEL
-
+from Task_6.config import CONTEXT_MESSAGES
 import re
 DEVANAGARI = re.compile(r"[\u0900-\u097F]")
 
@@ -65,7 +65,7 @@ def generate_reply(message, history, analysis, route):
         + f"\n\nNEXT STEP (state this in your own words): {next_step_text(route)}"
     )
     messages = [{"role": "system", "content": system_prompt}]
-    for m in history[-6:]:
+    for m in history[-CONTEXT_MESSAGES:]:
         role = "assistant" if m["role"] == "bot" else "user"
         messages.append({"role": role, "content": m["content"]})
     messages.append({"role": "user", "content": message})

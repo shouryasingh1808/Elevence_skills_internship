@@ -1,0 +1,11 @@
+---
+doc_id: agent_refund_guide
+title: Agent Refund Guide
+version: 1
+product: all
+region: global
+access: agent
+effective: 2026-01-01
+expires: none
+---
+Agents can approve refund till Rs 5000, refunds above Rs 5000 need manager approval. 

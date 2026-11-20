@@ -1,0 +1,15 @@
+{
+  "active_version": 1,
+  "files": {
+    "agent_refund_guide.txt": "316e0f18f1f2eca45dede5441789df07c1e355b8a3b42df72f6ae9b4cbc7546f",
+    "laptop_troubleshooting.txt": "95bd7b821607c4bc0549d995f86eb6c3317690c42ebbaa57c22a5fb6f522d3cd",
+    "phone_troubleshooting.txt": "66f2eca292279d30fdc6953b117df58e7a37eafa0973904e58fef03f7347b07e",
+    "refund_policy_v1.txt": "45129badddd96fb33c8b1bc6b9abf25bc56faf207b0f57723b9ebe14eca59d31",
+    "refund_policy_v2.txt": "59410c6a51ce67be646589cd1f780324dc2f69821202e3f9ae0b99529dd05da1",
+    "refund_policy_v3.txt": "9863dbaca80e843a73cf39000563e7b01605020c93f2f686a015f386faa5a5d7",
+    "return_shipping.txt": "2950437c7d63b54add36bc29f36c948c34c4f4c10202e3019835c8203f0d2414",
+    "shipping_faq.txt": "bcca4f95953bc0cd7b305140ea4f80e6799982e2bb2bc30574833044dbdf2236",
+    "warranty_global.txt": "52709a063eaa62dea7a7aa64ec3871404cb60172cfa799fdfbbce1bc07697dc6",
+    "warranty_india.txt": "4ec59277fa35395072da95ae127dc6bbe5ab0ef45eca4d3264539ac285d36d98"
+  }
+}

@@ -1,0 +1,12 @@
+---
+doc_id: refund_policy
+title: Refund Policy
+version: 1
+product: all
+region: global
+access: public
+effective: 2025-01-01
+expires: 2026-03-31
+---
+
+Customers can request a refund within 7 days of delivery. The refund is paid back to the original payment method within 5 working days after the returned item reaches our warehouse. Opened software and gift cards cannot be returned.

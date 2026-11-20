@@ -1,0 +1,11 @@
+---
+doc_id: return_shipping
+title: Return Shipping
+version: 1
+product: all
+region: global
+access: public
+effective: 2026-01-01
+expires: none
+---
+Return shipping is free for damaged items. For other returns the customer pays a shipping cost of Rs 99.
