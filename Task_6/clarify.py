@@ -17,10 +17,18 @@ ASK_INTENT = {
 UNSUPPORTED = f"Sorry, I can currently help in {', '.join(SUPPORTED_LANGUAGES)}. Could you write in one of these languages?"
 
 
+def canonical_language(name):
+    lowered = (name or "").strip().lower()
+    for supported in SUPPORTED_LANGUAGES:
+        if lowered == supported.lower() or lowered.startswith(supported.lower() + " "):
+            return supported
+    return name or "unknown"
+
+
 def needs_clarification(analysis):
     if analysis.get("analyzer_failed"):
         return None
-    language = analysis.get("language", "unknown")
+    language = canonical_language(analysis.get("language", "unknown"))
     if language == "unknown" or analysis.get("language_confidence", 1.0) < LANGUAGE_CONFIDENCE_MIN:
         return "language"
     if language not in SUPPORTED_LANGUAGES:
@@ -35,4 +43,4 @@ def clarification_text(reason, analysis):
         return ASK_LANGUAGE
     if reason == "unsupported_language":
         return UNSUPPORTED
-    return ASK_INTENT.get(analysis.get("language"), ASK_INTENT["English"])
+    return ASK_INTENT.get(canonical_language(analysis.get("language")), ASK_INTENT["English"])

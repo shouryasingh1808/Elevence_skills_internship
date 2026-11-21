@@ -139,10 +139,10 @@
     ]
   },
   {
-    "name": "angry_customer_question_skips_knowledge_base",
+    "name": "angry_customer_gets_empathy_and_answer",
     "start": "2026-10-06T11:00:00",
     "steps": [
-      {"minutes": 0, "text": "This service is terrible and I am furious! What is the refund policy?", "expect": {"kb_used": false, "reply_lacks": ["Sources:"]}}
+      {"minutes": 0, "text": "This service is terrible and I am furious! What is the refund policy?", "expect": {"kb_used": true, "reply_has": ["Sources:"]}}
     ]
   }
 ]

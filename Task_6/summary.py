@@ -4,6 +4,7 @@ from Task_1.analyzer import client, MODEL
 from Task_1.pipeline import get_state
 from Task_2.masking import mask_text
 from Task_6.sessions import open_session
+from Task_6.config import SUMMARY_MARKER
 
 SUMMARY_PROMPT = (
     "You write a short summary of a finished customer-support conversation, so it can be continued later. "
@@ -43,8 +44,7 @@ def summarize_session(session_id):
 
 def restore_into_state(state, summary):
     if summary and not state.history:
-        state.add_message("bot", f"[Summary of the earlier conversation] {summary}")
-
+        state.add_message("bot", f"{SUMMARY_MARKER} {summary}")
 
 def begin_session(customer_id):
     info = open_session(customer_id, summarize_session)

@@ -10,6 +10,7 @@ from Task_1 import records
 from Task_2.run_cases import reset as reset_task2
 from chatbot import engine
 from chatbot.engine import handle_message, run_timeouts
+import Task_6.sessions as task6_sessions
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "Data"
 CASES_FILE = DATA_DIR / "chatbot_test_cases.json"
@@ -21,6 +22,8 @@ def reset(setup):
     task1_pipeline.sessions.clear()
     engine.ticketed.clear()
     records.RECORDS_FILE = TEST_RECORDS_FILE
+    task6_sessions.customers.clear()
+    engine.pending_questions.clear()
 
 
 def check_step(expect, created, reply, out):

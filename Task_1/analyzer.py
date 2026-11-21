@@ -24,6 +24,7 @@ Return ONLY a JSON object with exactly these keys:
 - "language": one of "English", "Hindi" (written in Devanagari script), "Hinglish" (Hindi written in Roman/English letters, or Hindi mixed with English), or the language name for any other language
 - "language_confidence": number between 0 and 1: how sure you are about the language. Very short or unclear messages such as "ok" or "???" must get a low value.
 - "intent": "question" or "complaint". "question" means the customer asks for information or instructions: policies, shipping, warranty, product details, or how to use, set up or fix a product. "complaint" means the customer reports that something went wrong with their own order, payment, delivery or account, is unhappy, or says anything else (for example thanks).
+- "has_question": true if the message contains any request for general information (policies, shipping, warranty, product how-to), even together with a complaint; otherwise false
 - "intent_confidence": number between 0 and 1: how sure you are about the intent. Vague, very short or ambiguous messages must get a low value.
 - "is_complaint": true only if the customer is reporting a problem with their own order, payment, delivery or account; false for thanks, praise, solved problems and general questions- "risk_type": one of "none","account_compromise","duplicate_payment","legal_threat"
 - "risk_confidence": number between 0 and 1
@@ -88,6 +89,7 @@ def analyze_message(message, history=None):
             "sentiment": "neutral", "sentiment_confidence": 0.0,
             "language": "unknown", "is_complaint": False,
             "intent": "complaint",
+            "has_question": False,
             "risk_type": "none", "risk_confidence": 0.0,
             "reason": f"analyzer failed: {e}", "analyzer_failed": True,
             "language_confidence": 0.0, "intent_confidence": 0.0,
@@ -103,6 +105,7 @@ def analyze_message(message, history=None):
         "language_confidence": _to_confidence(raw.get("language_confidence", 1.0)),
         "intent_confidence": _to_confidence(raw.get("intent_confidence", 1.0)),
         "intent": raw.get("intent") if raw.get("intent") in VALID_INTENTS else "complaint",
+        "has_question": bool(raw.get("has_question", False)),
         "is_complaint": bool(raw.get("is_complaint", False)),
         "risk_type": risk_type if risk_type in VALID_RISKS else "none",
         "risk_confidence": _to_confidence(raw.get("risk_confidence")),
