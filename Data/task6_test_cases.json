@@ -1,0 +1,87 @@
+[
+  {"name": "spanish_question", "steps": [
+    {"customer": "sofia", "minutes": 0, "text": "¿Cuál es la política de reembolso?",
+     "expect": {"language_in": ["Spanish"], "session_event": "new", "kb_status": "answered", "reply_has": ["10", "refund_policy_v2.txt"]}}]},
+  {"name": "french_question", "steps": [
+    {"customer": "marc", "minutes": 0, "text": "Combien de temps dure la garantie ?",
+     "expect": {"language_in": ["French"], "kb_status": "answered", "reply_has": ["12", "warranty_global.txt"]}}]},
+  {"name": "hindi_question_gets_devanagari_reply", "steps": [
+    {"customer": "meera", "minutes": 0, "text": "रिफंड पॉलिसी क्या है?",
+     "expect": {"language_in": ["Hindi"], "kb_status": "answered", "reply_script": "devanagari", "reply_has": ["10"]}}]},
+  {"name": "hinglish_question_gets_roman_reply", "steps": [
+    {"customer": "riya", "minutes": 0, "text": "Refund policy kya hai? Kitne din mein refund milta hai?",
+     "expect": {"language_in": ["Hinglish"], "kb_status": "answered", "reply_script": "roman", "reply_has": ["10"]}}]},
+  {"name": "hinglish_complaint_gets_roman_reply", "steps": [
+    {"customer": "ravi", "minutes": 0, "text": "Mera order ORD-4521 3 din se nahi aaya, bahut gussa aa raha hai",
+     "expect": {"language_in": ["Hinglish"], "reply_script": "roman", "kb_status": null}}]},
+  {"name": "language_switch_inside_one_conversation", "steps": [
+    {"customer": "lena", "minutes": 0, "text": "What is the refund policy?",
+     "expect": {"language_in": ["English"], "session_event": "new", "kb_status": "answered", "reply_has": ["10"]}},
+    {"customer": "lena", "minutes": 1, "text": "¿Cuánto dura la garantía?",
+     "expect": {"language_in": ["Spanish"], "session_event": "continuing", "kb_status": "answered", "reply_has": ["12"]}},
+    {"customer": "lena", "minutes": 2, "text": "Shipping free hai kya?",
+     "expect": {"language_in": ["Hinglish"], "kb_status": "answered", "reply_has": ["499"], "reply_lacks": ["unlimited"], "reply_script": "roman"}}]},
+  {"name": "complaint_and_question_in_one_message", "steps": [
+    {"customer": "omar", "minutes": 0, "text": "My order ORD-4521 is late and what is your refund policy?",
+     "expect": {"kb_status": "answered", "reply_has": ["Sources:"], "reply_lacks": ["don't have that information"]}}]},
+  {"name": "spelling_mistakes_are_handled", "steps": [
+    {"customer": "ben", "minutes": 0, "text": "wat is the refnd polcy",
+     "expect": {"kb_status": "answered", "reply_has": ["10"]}}]},
+  {"name": "ambiguous_followup_is_joined_to_the_question", "steps": [
+    {"customer": "tara", "minutes": 0, "text": "How do I fix a fast draining battery?",
+     "expect": {"kb_status": "clarify", "reply_has": ["laptop", "phone"]}},
+    {"customer": "tara", "minutes": 1, "text": "laptop",
+     "expect": {"session_event": "continuing", "kb_status": "answered", "reply_has": ["laptop_troubleshooting.txt"]}}]},
+  {"name": "very_short_message_asks_a_clarifying_question", "steps": [
+    {"customer": "zed", "minutes": 0, "text": "ok",
+     "expect": {"clarification_in": ["language", "intent"], "kb_status": null}}]},
+  {"name": "unsupported_language_is_not_answered", "steps": [
+    {"customer": "hans", "minutes": 0, "text": "Guten Tag, wo ist meine Bestellung?",
+     "expect": {"clarification_in": ["unsupported_language", "language"], "reply_lacks": ["Sources"]}}]},
+  {"name": "session_ends_after_30_idle_minutes", "steps": [
+    {"customer": "asha", "minutes": 0, "text": "My order ORD-4521 has not arrived for 3 days",
+     "expect": {"session_event": "new"}},
+    {"customer": "asha", "minutes": 29, "text": "Any update on my order?",
+     "expect": {"session_event": "continuing"}},
+    {"customer": "asha", "minutes": 60, "text": "Any update on my order?",
+     "expect": {"session_event": "restored", "summary_has": "ORD-4521"}}]},
+  {"name": "session_ends_at_exactly_30_minutes", "steps": [
+    {"customer": "asha", "minutes": 0, "text": "My order ORD-4521 has not arrived for 3 days",
+     "expect": {"session_event": "new"}},
+    {"customer": "asha", "minutes": 30, "text": "Any update on my order?",
+     "expect": {"session_event": "restored"}}]},
+  {"name": "return_after_more_than_24_hours_starts_fresh", "steps": [
+    {"customer": "asha", "minutes": 0, "text": "My order ORD-4521 has not arrived for 3 days",
+     "expect": {"session_event": "new"}},
+    {"customer": "asha", "minutes": 1441, "text": "Hello again",
+     "expect": {"session_event": "new_after_expiry", "no_summary": true}}]},
+  {"name": "return_at_exactly_24_hours_restores_the_summary", "steps": [
+    {"customer": "asha", "minutes": 0, "text": "My order ORD-4521 has not arrived for 3 days",
+     "expect": {"session_event": "new"}},
+    {"customer": "asha", "minutes": 1440, "text": "Hello again",
+     "expect": {"session_event": "restored", "summary_has": "ORD-4521"}}]},
+  {"name": "idle_sweep_ends_sessions_without_a_new_message", "steps": [
+    {"customer": "asha", "minutes": 0, "text": "My order ORD-4521 has not arrived for 3 days",
+     "expect": {"session_event": "new"}},
+    {"minutes": 40, "sweep": true, "expect": {"sessions_ended_include": ["asha-s1"]}},
+    {"customer": "asha", "minutes": 45, "text": "Any update on my order?",
+     "expect": {"session_event": "restored"}}]},
+  {"name": "two_customers_are_isolated", "steps": [
+    {"customer": "a", "minutes": 0, "text": "My order ORD-4521 has not arrived for 3 days, I am very disappointed",
+     "expect": {"tickets_created": 0}},
+    {"customer": "a", "minutes": 2, "text": "No reply from you, this is terrible service",
+     "expect": {"tickets_created": 0}},
+    {"customer": "b", "minutes": 3, "text": "Hello, I need some help with an order",
+     "expect": {"session_event": "new", "tickets_created": 0}},
+    {"customer": "a", "minutes": 4, "text": "This is the worst support ever, I am very angry. My email is a@b.com",
+     "expect": {"tickets_created": 1}},
+    {"customer": "b", "minutes": 5, "text": "Thanks, can you tell me the status?",
+     "expect": {"tickets_created": 0, "reply_lacks": ["TCK-"]}}]},
+  {"name": "corrected_order_id_wins", "steps": [
+    {"customer": "kim", "minutes": 0, "text": "My order ORD-55 has not arrived for 5 days, I am very disappointed",
+     "expect": {"tickets_created": 0}},
+    {"customer": "kim", "minutes": 2, "text": "No reply from you, terrible service. Sorry, I made a mistake, my order is ORD-77, not ORD-55.",
+     "expect": {"tickets_created": 0}},
+    {"customer": "kim", "minutes": 4, "text": "This is the worst support ever, I am very angry. My email is a@b.com",
+     "expect": {"tickets_created": 1, "ticket_order": "ORD-77"}}]}
+]

@@ -12,7 +12,8 @@ from Task_6.clarify import canonical_language, clarification_text, needs_clarifi
 from Task_6.config import BASE_LANGUAGE, FOLLOWUP_MAX_WORDS
 from Task_6.sessions import expire_idle_sessions
 from Task_6.summary import begin_session, summarize_session
-from Task_6.translate import fix_spelling, localize_kb, translate_answer, translate_question
+from Task_6.translate import DEVANAGARI, clean_text, fix_spelling, localize_kb, translate_answer, translate_question
+
 
 ticketed = set()
 pending_questions = {}
@@ -69,7 +70,13 @@ def handle_message(customer_id, message, user_level=DEFAULT_USER_LEVEL, region=N
 
     pending = pending_questions.pop(session_id, None)
     is_followup = pending is not None and not escalating and len(message.split()) <= FOLLOWUP_MAX_WORDS
-    language = pending["language"] if is_followup else canonical_language(analysis["language"])
+
+    language = canonical_language(analysis["language"])
+    if language == "Hindi" and not DEVANAGARI.search(message):
+        language = "Hinglish"
+    analysis["language"] = language
+    if is_followup:
+        language = pending["language"]
 
     reason = None if (escalating or is_followup) else needs_clarification(analysis)
     wants_kb = analysis["intent"] == "question" or analysis.get("has_question", False)
@@ -89,14 +96,17 @@ def handle_message(customer_id, message, user_level=DEFAULT_USER_LEVEL, region=N
     elif analysis["intent"] == "question" or is_followup:
         reply = localize_kb(kb, language)
     else:
-        reply = result["reply"] + "\n\n" + localize_kb(kb, language)
+        reply = result["reply"]
+        if kb["status"] in ("answered", "clarify"):
+            reply = reply + "\n\n" + localize_kb(kb, language)
 
     extra, outcomes = [], []
     if state.escalated and session_id not in ticketed:
         extra, outcomes = create_tickets_for(session_id, analysis["sentiment"])
     if extra:
         reply = reply + "\n\n" + localize_text("\n".join(extra), language)
-
+    
+    reply = clean_text(reply)
     output = {**result, "reply": reply, "tickets": outcomes, "kb": kb,
               "session": session, "clarification": reason}
     monitor.record_message(output, (time.perf_counter() - started) * 1000)

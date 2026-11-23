@@ -47,10 +47,15 @@ STATIC = {
     },
 }
 
+INVISIBLE = dict.fromkeys(map(ord, "\u200b\u2060\ufeff"), " ")
+
+
+def clean_text(text):
+    text = text.translate(INVISIBLE).replace("\u2011", "-").replace("\u00ad", "")
+    return "\n".join(" ".join(line.split()) for line in text.split("\n"))
 
 def text_for(language, key):
     return STATIC.get(language, STATIC["English"])[key]
-
 
 def ask_llm(system, text):
     try:
@@ -60,7 +65,7 @@ def ask_llm(system, text):
             reasoning_effort="low",
             messages=[{"role": "system", "content": system}, {"role": "user", "content": text}],
         )
-        return " ".join((response.choices[0].message.content or "").split())
+        return clean_text(response.choices[0].message.content or "")
     except Exception as e:
         print(f"[translation failed: {e}]")
         return ""
@@ -128,3 +133,4 @@ def fix_spelling(text):
     )
     fixed = ask_llm(system, text)
     return fixed if fixed and not check_preserved(text, fixed) else text
+

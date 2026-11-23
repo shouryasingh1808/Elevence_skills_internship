@@ -18,7 +18,7 @@ def say(customer, minutes, text):
     kb = r["kb"]["status"] if r["kb"] else None
     print(f"[{customer} +{minutes}] {text}")
     print(f"   {r['session']['session_id']} {r['session']['event']} | {r['analysis']['language']} | kb: {kb} | clarify: {r['clarification']}")
-    print("   bot:", r["reply"].replace("\n", " | ")[:230])
+    print("   bot:", r["reply"].replace("\n", " | ")[:600])
 
 
 say("sofia", 0, "¿Cuál es la política de reembolso?")
