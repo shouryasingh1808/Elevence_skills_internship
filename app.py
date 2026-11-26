@@ -1,34 +1,25 @@
-import uuid
 from datetime import datetime
 
 import streamlit as st
 
 from Task_1 import config as clock
-from chatbot.engine import handle_message, run_timeouts
 from Task_2.tickets import tickets
-from Task_4.config import ACCESS_LEVELS  
-from Task_4.filters import valid_on , allowed_by_access
-from Task_4.loader import load_documents  
-
-from Task_3 import config as t3
-from Task_3 import monitor
-from Task_3.activation import run_health_check
-from Task_3.health import health_check
-from Task_3.pipeline import manual_rollback, run_update
-from Task_3.scanner import load_manifest
-from Task_3.scheduler import tick
+from Task_4.config import ACCESS_LEVELS
+from Task_4.filters import allowed_by_access, valid_on
+from Task_4.loader import load_documents
+from chatbot.engine import handle_message, run_timeouts
 
 st.title("CUSTOMER SUPPORT CHATBOT 🤖")
 
-if "session_id" not in st.session_state:
-    st.session_state.session_id = str(uuid.uuid4())
-    st.session_state.chat = []
-    st.session_state.last = None
+if "chats" not in st.session_state:  # NEW (Task 6): har customer ki apni chat
+    st.session_state.chats = {}
+    st.session_state.last = {}
 
 with st.sidebar:
-    st.header("Demo controls")  
-    user_level = st.selectbox("User level", list(ACCESS_LEVELS), index=1)  
-    region = st.selectbox("Region", ["(not set)", "india", "usa"])  
+    st.header("Demo controls")
+    customer_id = st.text_input("Customer ID", "customer-1")  # NEW (Task 6)
+    user_level = st.selectbox("User level", list(ACCESS_LEVELS), index=1)
+    region = st.selectbox("Region", ["(not set)", "india", "usa"])
 
     use_fake = st.checkbox("Use fake time")
     if use_fake:
@@ -42,43 +33,48 @@ with st.sidebar:
     if st.button("Run timeouts"):
         out = run_timeouts()
         st.write(f"Timeouts: {len(out['timeouts'])} | New tickets: {len(out['tickets'])}")
+        st.write(f"Sessions ended: {len(out['sessions_ended'])}")  # NEW (Task 6)
         for e in out["sla_events"]:
             st.write(f"{e['ticket']}: {e['event']}")
 
-region_value = None if region == "(not set)" else region  
+region_value = None if region == "(not set)" else region
 
 message = st.text_input("Customer message: ")
 btn = st.button("Send")
 
+chat = st.session_state.chats.setdefault(customer_id, [])  # NEW (Task 6)
 if btn and message:
     try:
         with st.spinner("Thinking..."):
-            result = handle_message(
-                st.session_state.session_id, message,
-                user_level=user_level, region=region_value,
-            )  
-        st.session_state.chat.append({"role": "Customer", "content": message})
-        st.session_state.chat.append({"role": "Bot", "content": result["reply"]})
-        st.session_state.last = result
+            result = handle_message(customer_id, message, user_level=user_level, region=region_value)
+        chat.append({"role": "Customer", "content": message})
+        chat.append({"role": "Bot", "content": result["reply"]})
+        st.session_state.last[customer_id] = result
     except Exception as e:
         st.error(f"Error: {e}")
 
 st.header("Chat")
-for m in st.session_state.chat:
+for m in chat:
     st.write(f"**{m['role']}:** {m['content']}")
 
-last = st.session_state.last
+last = st.session_state.last.get(customer_id)
 if last:
     with st.expander("Details", expanded=True):
         a = last["analysis"]
-        kb = last["kb"]  
+        kb = last["kb"]
+        session = last["session"]  # NEW (Task 6)
+        st.write(f"Session: {session['session_id']} ({session['event']})")  # NEW (Task 6)
+        if session["event"] == "restored" and session["summary"]:  # NEW (Task 6)
+            st.write("Restored summary: " + session["summary"])  # NEW (Task 6)
         st.write(f"Mood: {a['sentiment']} ({a['sentiment_confidence']})")
-        st.write(f"Language: {a['language']}")
+        st.write(f"Language: {a['language']} ({a['language_confidence']}) | Intent: {a['intent']} ({a['intent_confidence']})")  # NEW (Task 6)
         st.write(f"Risk: {a['risk_type']} ({a['risk_confidence']})")
         st.write(f"Queue: {last['route']['queue']}")
-        st.write("Answered by: " + (f"Knowledge base ({kb['status']})" if kb is not None else "Support rules (Task 1)"))  
-        if kb is not None and kb.get("problems"):  
-            st.write("Rejected because: " + ", ".join(kb["problems"]))  
+        st.write("Answered by: " + (f"Knowledge base ({kb['status']})" if kb is not None else "Support rules (Task 1)"))
+        if last["clarification"]:  # NEW (Task 6)
+            st.write("Clarification asked: " + last["clarification"])  # NEW (Task 6)
+        if kb is not None and kb.get("problems"):
+            st.write("Rejected because: " + ", ".join(kb["problems"]))
         if last["triggers"]:
             st.write("Escalation: " + ", ".join(t["condition"] for t in last["triggers"]))
 
@@ -93,45 +89,3 @@ with st.expander("Knowledge base (demo view)"):
             continue
         ok = "valid" if valid_on(d, today) else "not valid"
         st.write(f"{d['file']} | v{d['version']} | {d['access']} | {d['region']} | {d['product']} | {ok} today")
-
-st.header("Knowledge base admin (Task 3)")
-with st.expander("Update pipeline"):
-    st.write(f"Acting as role: **{user_level}** (change it in the sidebar)")
-
-    uploaded = st.file_uploader("Add a document to the incoming folder", type=["txt"])
-    if uploaded is not None and st.button("Save to incoming"):
-        t3.INCOMING.mkdir(parents=True, exist_ok=True)
-        (t3.INCOMING / uploaded.name).write_bytes(uploaded.getvalue())
-        st.success(f"Saved {uploaded.name} to incoming")
-
-    c1, c2, c3, c4 = st.columns(4)
-    if c1.button("Run update"):
-        with st.spinner("Running update (about 1-2 minutes)..."):
-            st.session_state.admin_result = run_update("demo_user", user_level)
-    if c2.button("Scheduler tick"):
-        with st.spinner("Running scheduler tick..."):
-            st.session_state.admin_result = tick(lambda: run_update("scheduler", "admin"))
-    if c3.button("Health check"):
-        with st.spinner("Checking..."):
-            st.session_state.admin_result = run_health_check(health_check)
-    if c4.button("Roll back"):
-        st.session_state.admin_result = manual_rollback("demo_user", user_level)
-
-    if st.session_state.get("admin_result"):
-        st.write("Result:")
-        st.json(st.session_state.admin_result)
-
-    manifest = load_manifest()
-    st.write(f"Active version: {manifest['active_version']} | previous: {manifest.get('previous_version')} | "
-             f"pending: {manifest.get('pending')} | health: {manifest.get('health', '-')}")
-    st.write("Schedule:", manifest.get("schedule", "not started"))
-    st.write("Incoming:", sorted(p.name for p in t3.INCOMING.glob("*.txt")) if t3.INCOMING.exists() else [])
-    st.write("Quarantine:", sorted(p.name for p in t3.QUARANTINE.glob("*.txt")) if t3.QUARANTINE.exists() else [])
-
-    st.write("Monitoring:")
-    st.json(monitor.summary())
-
-    if t3.AUDIT_FILE.exists():
-        st.write("Last audit entries:")
-        for line in t3.AUDIT_FILE.read_text(encoding="utf-8").splitlines()[-5:]:
-            st.code(line)
